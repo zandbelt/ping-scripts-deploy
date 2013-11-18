@@ -40,10 +40,11 @@ pf_deploy_utility_check() {
 }
 
 pf_deploy_unzip() {
-	NAME=$1
-	DESC=$2
-	ZIP=`ls ${NAME}-*.zip`
-	if [ ! -r ${ZIP} ] ; then echo " The $DESC ZIP distribution is missing: download it to this directory first." ; exit ; fi
+	local NAME=$1
+	local DESC=$2
+	local DIR
+	ZIP=`find . -name "${NAME}-*.zip" -print -prune`
+	if [ -z ${ZIP} ] ; then echo " The $DESC distribution is missing: download it to this directory first." ; exit ; fi
 	BASE=`basename ${ZIP} .zip`
 	if [ ! -z $3 ] ; then DIR="-d ${BASE}" ; fi
 	echo " [${BASE}] unzip ${ZIP} ... "
@@ -55,7 +56,7 @@ pf_deploy_license_check() {
 }
 
 pf_deploy_runsh_jvm_patch() {
-	BASE=$1
+	local BASE=$1
 	echo " [${BASE}] patching run.sh for JVM location ... "
 	cat <<EOF | patch -s -p0 ${BASE}/pingfederate/bin/run.sh
 9a10,11
@@ -64,14 +65,33 @@ pf_deploy_runsh_jvm_patch() {
 EOF
 }
 
+pf_deploy_secondary_port_patch() {
+	local BASE=$1
+	local PORT=$2
+	echo " [${BASE}] patching run.properties for secondary port ${PORT} ... "
+	cat <<EOF | patch -s -p0 ${BASE}/pingfederate/bin/run.properties
+--- pingfederate-7.1.1.org/pingfederate/bin/run.properties	2013-11-07 17:20:18.000000000 +0100
++++ pingfederate-7.1.1/pingfederate/bin/run.properties	2013-11-16 23:59:41.000000000 +0100
+@@ -101,7 +101,7 @@
+ # authentication or for SAML back-channel authentication, you must use this 
+ # port for security reasons (or use a similarly configured new listener, 
+ # with either "WantClientAuth" or "NeedClientAuth" set to "true".
+-pf.secondary.https.port=-1
++pf.secondary.https.port=9032
+ # 
+ # This property defines the IP address over which the PingFederate server 
+ # communicates with partner federation gateways. Use for deployments where 
+EOF
+}
+
 pf_deploy_license_copy() {
-	BASE=$1
+	local BASE=$1
 	echo " [${BASE}] copying license file ... "
 	cp pingfederate.lic ${BASE}/pingfederate/server/default/conf
 }
 
 pf_deploy_set_first_login_done() {
-	BASE=$1
+	local BASE=$1
 	echo " [${BASE}] set first login done ... "
 	cat > ${BASE}/pingfederate/server/default/data/config-store/com.pingidentity.page.Login.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -85,7 +105,7 @@ EOF
 }
 
 pf_deploy_set_default_admin_password() {
-	BASE=$1
+	local BASE=$1
 	echo " [${BASE}] set default admin password ... "
 	cat > ${BASE}/pingfederate/server/default/data/pingfederate-admin-user.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -109,8 +129,30 @@ pf_deploy_set_default_admin_password() {
 EOF
 }
 
+pf_deploy_browser_open() {
+	local URL=$1
+	local ADMIN=administrator
+	local PASSWD=2Federate
+	local TMPFILE=/tmp/autopost.html
+cat > ${TMPFILE} <<EOF
+<html><body onload="document.forms[0].submit()">
+<form method="post" action="${URL}">
+<input name="service" value="direct/0/login/\$Form"/>
+<input name="sp" value="S0"/>
+<input name="Form0" value="\$FormConditional,\$FormConditional\$0,\$FormConditional\$1,username,password,\$Submit"/>
+<input name="\$FormConditional" value="F"/>
+<input name="\$FormConditional\$0" value="F"/>
+<input name="\$FormConditional\$1" value="T"/>
+<input name="username" value="${ADMIN}"/>
+<input name="password" value="${PASSWD}"/>
+<input name="\$Submit" value="Login"/>
+</body></html>
+EOF
+	open ${TMPFILE}
+}
+
 pf_deploy_launch_macos() {
-	BASE=$1
+	local BASE=$1
 	if [ -z $2 ] ; then
 		echo " [${BASE}] launch PingFederate ... "
 		# avoid Mac OS X warning about files downloaded from the Internet
@@ -120,10 +162,12 @@ pf_deploy_launch_macos() {
 		# wait until PingFederate has been started
 		while [ ! -r ${BASE}/pingfederate/log/server.log ] ; do sleep 1 ; done
 		while [ `tail -n 10 ${BASE}/pingfederate/log/server.log | grep "PingFederate started in"  | wc -l` == 0 ] ; do sleep 1 ; done
+		pf_deploy_browser_open https://localhost:9999/pingfederate/app
 	fi
 }
 
 pf_deploy_pingfederate() {
+	# NB: global BASE var
 	pf_deploy_utility_check unzip
 	if [ -z $1 ] ; then
 		pf_deploy_license_check
