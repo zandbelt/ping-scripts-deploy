@@ -43,7 +43,7 @@ pf_deploy_unzip() {
 	local NAME=$1
 	local DESC=$2
 	local DIR
-	ZIP=`find . -name "${NAME}-[1234567890]*.zip" -print -prune`
+	ZIP=`find . -name "${NAME}-[0-9]*.zip" -print -prune`
 	if [ -z ${ZIP} ] ; then echo " The $DESC distribution is missing: download it to this directory first." ; exit ; fi
 	BASE=`basename ${ZIP} .zip`
 	if [ ! -z $3 ] ; then DIR="-d ${BASE}" ; fi
@@ -158,7 +158,9 @@ pf_deploy_launch_macos() {
 		# avoid Mac OS X warning about files downloaded from the Internet
 		xattr -d -r com.apple.quarantine ${BASE}/pingfederate/bin/run.sh
 		# start PingFederate in a new Terminal
-		open -a Terminal ${BASE}/pingfederate/bin/run.sh
+		osascript >/dev/null <<EOF
+tell application "Terminal" to do script "printf \"\\\033]0;PingFederate\\\007\" && cd ${PWD}/${BASE}/pingfederate/bin && ./run.sh"
+EOF
 		# wait until PingFederate has been started
 		while [ ! -r ${BASE}/pingfederate/log/server.log ] ; do sleep 1 ; done
 		while [ `tail -n 10 ${BASE}/pingfederate/log/server.log | grep "PingFederate started in"  | wc -l` == 0 ] ; do sleep 1 ; done
@@ -213,9 +215,9 @@ pa_deploy_launch_macos() {
 		# avoid Mac OS X warning about files downloaded from the Internet
 		xattr -d -r com.apple.quarantine ${BASE}/run.sh
 		# start PingAccess in a new Terminal
-		mkdir -p ${BASE}/logs
+		mkdir -p ${BASE}/logs ; rm -f ${BASE}/${LOGFILE}
 		osascript >/dev/null <<EOF
-tell application "Terminal" to do script "cd ${PWD}/${BASE} && ./run.sh | tee ${LOGFILE}"
+tell application "Terminal" to do script "printf \"\\\033]0;PingAccess\\\007\" && cd ${PWD}/${BASE} && ./run.sh | tee ${LOGFILE}"
 EOF
 		# wait until PingAccess has been started
 		while [ ! -r ${BASE}/${LOGFILE} ] ; do sleep 1 ; done
