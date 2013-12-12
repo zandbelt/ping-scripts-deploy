@@ -43,7 +43,7 @@ pf_deploy_unzip() {
 	local NAME=$1
 	local DESC=$2
 	local DIR
-	ZIP=`find . -name "${NAME}-*.zip" -print -prune`
+	ZIP=`find . -name "${NAME}-[1234567890]*.zip" -print -prune`
 	if [ -z ${ZIP} ] ; then echo " The $DESC distribution is missing: download it to this directory first." ; exit ; fi
 	BASE=`basename ${ZIP} .zip`
 	if [ ! -z $3 ] ; then DIR="-d ${BASE}" ; fi
@@ -179,5 +179,47 @@ pf_deploy_pingfederate() {
 		pf_deploy_set_default_admin_password ${BASE}
 	else
 		BASE=$1
+	fi
+}
+
+pa_deploy_license_check() {
+	if [ ! -r pingaccess.lic ] ; then echo " The PingAccess license file is missing: download it to this directory first." ; exit ; fi
+}
+
+pa_deploy_license_copy() {
+	local BASE=$1
+	echo " [${BASE}] copying license file ... "
+	cp pingaccess.lic ${BASE}/conf
+}
+
+pa_deploy_pingaccess() {
+	# NB: global BASE var
+	pf_deploy_utility_check unzip
+	if [ -z $1 ] ; then
+		pa_deploy_license_check
+		pf_deploy_unzip pingaccess "PingAccess ZIP"
+		# BASE set now
+		pa_deploy_license_copy ${BASE}
+	else
+		BASE=$1
+	fi
+}
+
+pa_deploy_launch_macos() {
+	local BASE=$1
+	local LOGFILE=logs/boot.log
+	if [ -z $2 ] ; then
+		echo " [${BASE}] launch PingAccess ... "
+		# avoid Mac OS X warning about files downloaded from the Internet
+		xattr -d -r com.apple.quarantine ${BASE}/run.sh
+		# start PingAccess in a new Terminal
+		mkdir -p ${BASE}/logs
+		osascript >/dev/null <<EOF
+tell application "Terminal" to do script "cd ${PWD}/${BASE} && ./run.sh | tee ${LOGFILE}"
+EOF
+		# wait until PingAccess has been started
+		while [ ! -r ${BASE}/${LOGFILE} ] ; do sleep 1 ; done
+		while [ `tail -n 10 ${BASE}/${LOGFILE} | grep "PingAccess running"  | wc -l` == 0 ] ; do sleep 1 ; done
+		pf_deploy_browser_open https://localhost:9000
 	fi
 }
