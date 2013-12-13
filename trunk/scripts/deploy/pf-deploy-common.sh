@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ###########################################################################
 # Copyright (C) 2013 Ping Identity Corporation
 # All rights reserved.
@@ -131,6 +131,17 @@ EOF
 
 pf_deploy_browser_open() {
 	local URL=$1
+	if [ -x /usr/bin/firefox ] ; then
+		nohup /usr/bin/firefox ${URL} & 2>/dev/null
+	fi
+	# at least Mac OS X default browser
+	if [ -x /usr/bin/open ] ; then
+		/usr/bin/open ${URL}
+	fi
+}
+
+pf_deploy_browser_open_admin_login() {
+	local URL=https://localhost:9999/pingfederate/app
 	local ADMIN=administrator
 	local PASSWD=2Federate
 	local TMPFILE=/tmp/autopost.html
@@ -148,23 +159,51 @@ cat > ${TMPFILE} <<EOF
 <input name="\$Submit" value="Login"/>
 </body></html>
 EOF
-	open ${TMPFILE}
+	pf_deploy_browser_open ${TMPFILE}
+}
+
+pf_deploy_launch_terminal() {
+	local BASE=$1
+	local SCRIPT=$2
+	local TITLE=$3
+	local LOGFILE=$4
+
+	if [ `uname -s` = "Darwin" ] ; then
+		# avoid Mac OS X warning about files downloaded from the Internet
+		xattr -d -r com.apple.quarantine ${BASE}/${SCRIPT}
+		# start script in a new Terminal
+		osascript >/dev/null <<EOF
+tell application "Terminal" to do script "printf \"\\\033]0;${TITLE}\\\007\" && cd ${PWD}/${BASE} && ${SCRIPT} | tee ${LOGFILE}"
+EOF
+	else
+		#nohup xterm -T ${TITLE} -e "cd ${PWD}/${BASE} && ${SCRIPT} | tee ${LOGFILE}" >/dev/null 2>&1 &
+		xterm -T ${TITLE} -e "cd ${PWD}/${BASE} && ${SCRIPT} | tee ${LOGFILE}" &
+	fi
+}
+
+pf_deploy_watch_log() {
+	BASE=$1
+	LOGFILE=$2
+	TITLE=$3
+	SEARCH=$4
+
+	echo " [$BASE] Waiting for ${TITLE} to startup ... "
+	while [ ! -r ${BASE}/${LOGFILE} ] ; do sleep 1 ; done
+	while [ `tail -n 10 ${BASE}/${LOGFILE} | grep "${SEARCH}"  | wc -l` == 0 ] ; do sleep 1 ; done
+	echo " [$BASE] ${TITLE} started ... "		
 }
 
 pf_deploy_launch_macos() {
 	local BASE=$1
 	if [ -z $2 ] ; then
 		echo " [${BASE}] launch PingFederate ... "
-		# avoid Mac OS X warning about files downloaded from the Internet
-		xattr -d -r com.apple.quarantine ${BASE}/pingfederate/bin/run.sh
-		# start PingFederate in a new Terminal
-		osascript >/dev/null <<EOF
-tell application "Terminal" to do script "printf \"\\\033]0;PingFederate\\\007\" && cd ${PWD}/${BASE}/pingfederate/bin && ./run.sh"
-EOF
+		pf_deploy_launch_terminal ${BASE} pingfederate/bin/run.sh PingFederate pingfederate/logs/boot.log
 		# wait until PingFederate has been started
+		echo " [$BASE] Waiting for PingFederate to startup ... "
 		while [ ! -r ${BASE}/pingfederate/log/server.log ] ; do sleep 1 ; done
 		while [ `tail -n 10 ${BASE}/pingfederate/log/server.log | grep "PingFederate started in"  | wc -l` == 0 ] ; do sleep 1 ; done
-		pf_deploy_browser_open https://localhost:9999/pingfederate/app
+		echo " [$BASE] PingFederate started ... "
+		pf_deploy_browser_open_admin_login
 	fi
 }
 
@@ -212,16 +251,16 @@ pa_deploy_launch_macos() {
 	local LOGFILE=logs/boot.log
 	if [ -z $2 ] ; then
 		echo " [${BASE}] launch PingAccess ... "
-		# avoid Mac OS X warning about files downloaded from the Internet
-		xattr -d -r com.apple.quarantine ${BASE}/run.sh
-		# start PingAccess in a new Terminal
 		mkdir -p ${BASE}/logs ; rm -f ${BASE}/${LOGFILE}
-		osascript >/dev/null <<EOF
-tell application "Terminal" to do script "printf \"\\\033]0;PingAccess\\\007\" && cd ${PWD}/${BASE} && ./run.sh | tee ${LOGFILE}"
-EOF
+		pf_deploy_launch_terminal ${BASE} ./run.sh PingAccess ${LOGFILE}	
 		# wait until PingAccess has been started
-		while [ ! -r ${BASE}/${LOGFILE} ] ; do sleep 1 ; done
-		while [ `tail -n 10 ${BASE}/${LOGFILE} | grep "PingAccess running"  | wc -l` == 0 ] ; do sleep 1 ; done
+		pf_deploy_watch_log ${BASE} ${LOGFILE} PingAccess "PingAccess running"
+		
+		#echo " [$BASE] Waiting for PingAccess to startup ... "
+		#while [ ! -r ${BASE}/${LOGFILE} ] ; do sleep 1 ; done
+		#while [ `tail -n 10 ${BASE}/${LOGFILE} | grep "PingAccess running"  | wc -l` == 0 ] ; do sleep 1 ; done
+		#echo " [$BASE] PingAccess started ... "
+
 		pf_deploy_browser_open https://localhost:9000
 	fi
 }
