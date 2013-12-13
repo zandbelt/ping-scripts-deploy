@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ###########################################################################
 # Copyright (C) 2013 Ping Identity Corporation
 # All rights reserved.
