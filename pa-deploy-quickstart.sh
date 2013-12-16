@@ -45,7 +45,7 @@
 
 source "$(dirname "$0")/pf-deploy-common.sh"
 
-pf_deploy_utility_check python
+pf_deploy_utility_check python curl
 
 pf_deploy_pingfederate $1
 PFBASE=${BASE}
@@ -73,3 +73,25 @@ python ${QSBASE}/paconfig.py
 rm -rf ${QSBASE}
 
 pf_deploy_browser_open https://localhost:3000/headers
+
+URL=https://localhost:3000/api/headers
+
+echo
+echo " # Unauthorized access, should fail:"
+curl -k ${URL}
+echo
+
+RESPONSE=`curl -k -s -X POST -d "client_id=api_client&grant_type=password&username=joe&password=2Access&scope=edit" -k https://localhost:9031/as/token.oauth2`
+echo " # get token response:"
+echo ${RESPONSE}
+echo
+
+TOKEN=`expr "${RESPONSE}" : '.*\"access_token\":"\(.*\)"'`
+echo " # token:"
+echo ${TOKEN}
+echo
+
+echo " # Authorized access, should return JSON with headers:"
+curl -k -s -H "Authorization: Bearer ${TOKEN}" ${URL}
+echo
+echo
