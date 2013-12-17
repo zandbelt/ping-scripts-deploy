@@ -67,5 +67,5 @@ echo " [${PGBASE}] deploy OAuth Playground data.zip ... "
 unzip -q -o ${PGBASE}/data.zip -d ${PFBASE}/pingfederate/server/default/data
 rm -rf ${PGBASE}
 
-pf_deploy_launch_macos ${PFBASE} $1
+pf_deploy_launch ${PFBASE} $1
 

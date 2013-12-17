@@ -64,8 +64,8 @@ cp -r ${QSBASE}/pf-dist/*.war ${PFBASE}/pingfederate/server/default/deploy
 echo " [${QSBASE}] deploy PingFederate Quickstart data.zip ... "
 unzip -q -o ${QSBASE}/pf-data/data.zip -d ${PFBASE}/pingfederate/server/default/data
 
-pf_deploy_launch_macos ${PFBASE} $1
-pa_deploy_launch_macos ${PABASE} $1
+pf_deploy_launch ${PFBASE} $1
+pa_deploy_launch ${PABASE} $1
 
 echo " [${QSBASE}] running PingAccess configuration script ... "
 python ${QSBASE}/paconfig.py

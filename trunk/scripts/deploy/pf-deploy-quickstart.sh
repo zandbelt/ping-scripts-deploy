@@ -60,4 +60,4 @@ unzip -q -o ${QSBASE}/dist/data.zip -d ${PFBASE}/pingfederate/server/default/dat
 
 rm -rf ${QSBASE}
 
-pf_deploy_launch_macos ${PFBASE} $1
+pf_deploy_launch ${PFBASE} $1

@@ -69,5 +69,5 @@ echo " [${BASE}] deploy Agentless IK data.zip ... "
 unzip -q -o ${AIK}/Samples/data.zip -d ${PFBASE}/pingfederate/server/default/data
 rm -rf ${AIK}
 
-pf_deploy_launch_macos ${PFBASE} $1
+pf_deploy_launch ${PFBASE} $1
 pf_deploy_browser_open https://localhost:9031/AgentlessIntegrationKitSampleSP

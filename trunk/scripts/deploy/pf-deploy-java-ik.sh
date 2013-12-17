@@ -58,4 +58,4 @@ echo " [${BASE}] deploy Java IK data.zip ... "
 unzip -q -o ${JIK}/sample/data.zip -d ${PFBASE}/pingfederate/server/default/data
 rm -rf ${JIK}
 
-pf_deploy_launch_macos ${PFBASE} $1
+pf_deploy_launch ${PFBASE} $1
