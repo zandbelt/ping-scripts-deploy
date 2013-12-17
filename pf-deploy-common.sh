@@ -167,44 +167,33 @@ pf_deploy_launch_terminal() {
 	local SCRIPT=$2
 	local TITLE=$3
 	local LOGFILE=$4
-
-	if [ `uname -s` = "Darwin" ] ; then
+	echo " [${BASE}] launch ${TITLE} ... "
+	mkdir -p `dirname ${BASE}/${LOGFILE}` ; rm -f ${BASE}/${LOGFILE} ; touch ${BASE}/${LOGFILE}
+	if [ `uname -s` = "Darwinn" ] ; then
 		# avoid Mac OS X warning about files downloaded from the Internet
 		xattr -d -r com.apple.quarantine ${BASE}/${SCRIPT}
 		# start script in a new Terminal
 		osascript >/dev/null <<EOF
 tell application "Terminal" to do script "printf \"\\\033]0;${TITLE}\\\007\" && cd ${PWD}/${BASE} && ${SCRIPT} | tee ${LOGFILE}"
 EOF
+	elif [ -x /usr/bin/gnome-terminal ] ; then
+		/usr/bin/gnome-terminal --profile=Default -t "${TITLE}" --working-directory=${PWD}/${BASE} -e "${SCRIPT} | tee ${LOGFILE}"
 	else
-		#nohup xterm -T ${TITLE} -e "cd ${PWD}/${BASE} && ${SCRIPT} | tee ${LOGFILE}" >/dev/null 2>&1 &
 		xterm -T ${TITLE} -e "cd ${PWD}/${BASE} && ${SCRIPT} | tee ${LOGFILE}" &
 	fi
 }
 
-pf_deploy_watch_log() {
-	BASE=$1
-	LOGFILE=$2
-	TITLE=$3
-	SEARCH=$4
-
+pf_deploy_launch_and_wait() {
+	local BASE=$1
+	local SCRIPT=$2
+	local TITLE=$3
+	local LOGFILE=$4
+	local SEARCH=$5
+	pf_deploy_launch_terminal ${BASE} ${SCRIPT} ${TITLE} ${LOGFILE}
 	echo " [$BASE] Waiting for ${TITLE} to startup ... "
 	while [ ! -r ${BASE}/${LOGFILE} ] ; do sleep 1 ; done
-	while [ `tail -n 10 ${BASE}/${LOGFILE} | grep "${SEARCH}"  | wc -l` == 0 ] ; do sleep 1 ; done
-	echo " [$BASE] ${TITLE} started ... "		
-}
-
-pf_deploy_launch_macos() {
-	local BASE=$1
-	if [ -z $2 ] ; then
-		echo " [${BASE}] launch PingFederate ... "
-		pf_deploy_launch_terminal ${BASE} pingfederate/bin/run.sh PingFederate pingfederate/logs/boot.log
-		# wait until PingFederate has been started
-		echo " [$BASE] Waiting for PingFederate to startup ... "
-		while [ ! -r ${BASE}/pingfederate/log/server.log ] ; do sleep 1 ; done
-		while [ `tail -n 10 ${BASE}/pingfederate/log/server.log | grep "PingFederate started in"  | wc -l` == 0 ] ; do sleep 1 ; done
-		echo " [$BASE] PingFederate started ... "
-		pf_deploy_browser_open_admin_login
-	fi
+	while [ `tail ${BASE}/${LOGFILE} | grep "${SEARCH}"  | wc -l` == 0 ] ; do sleep 1 ; done
+	echo " [$BASE] ${TITLE} started ... "			
 }
 
 pf_deploy_pingfederate() {
@@ -246,21 +235,18 @@ pa_deploy_pingaccess() {
 	fi
 }
 
-pa_deploy_launch_macos() {
+pf_deploy_launch() {
 	local BASE=$1
-	local LOGFILE=logs/boot.log
 	if [ -z $2 ] ; then
-		echo " [${BASE}] launch PingAccess ... "
-		mkdir -p ${BASE}/logs ; rm -f ${BASE}/${LOGFILE}
-		pf_deploy_launch_terminal ${BASE} ./run.sh PingAccess ${LOGFILE}	
-		# wait until PingAccess has been started
-		pf_deploy_watch_log ${BASE} ${LOGFILE} PingAccess "PingAccess running"
-		
-		#echo " [$BASE] Waiting for PingAccess to startup ... "
-		#while [ ! -r ${BASE}/${LOGFILE} ] ; do sleep 1 ; done
-		#while [ `tail -n 10 ${BASE}/${LOGFILE} | grep "PingAccess running"  | wc -l` == 0 ] ; do sleep 1 ; done
-		#echo " [$BASE] PingAccess started ... "
+		pf_deploy_launch_and_wait ${BASE} pingfederate/bin/run.sh PingFederate pingfederate/log/boot.log "PingFederate started in"		
+		pf_deploy_browser_open_admin_login
+	fi
+}
 
+pa_deploy_launch() {
+	local BASE=$1
+	if [ -z $2 ] ; then
+		pf_deploy_launch_and_wait ${BASE} ./run.sh PingAccess logs/boot.log "PingAccess running"				
 		pf_deploy_browser_open https://localhost:9000
 	fi
 }
