@@ -169,7 +169,7 @@ pf_deploy_launch_terminal() {
 	local LOGFILE=$4
 	echo " [${BASE}] launch ${TITLE} ... "
 	mkdir -p `dirname ${BASE}/${LOGFILE}` ; rm -f ${BASE}/${LOGFILE} ; touch ${BASE}/${LOGFILE}
-	if [ `uname -s` = "Darwinn" ] ; then
+	if [ `uname -s` = "Darwin" ] ; then
 		# avoid Mac OS X warning about files downloaded from the Internet
 		xattr -d -r com.apple.quarantine ${BASE}/${SCRIPT}
 		# start script in a new Terminal
