@@ -36,10 +36,10 @@
 # Prerequisites:
 # - The (MacPorts) utilities unzip and python must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-7.1.2.zip)
-#   b) a PingAccess ZIP distribution (eg. pingaccess-2.0.1.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-7.1.0R2.zip)
+#   b) a PingAccess ZIP distribution (eg. pingaccess-2.1.0.zip)
 #   c) valid license files for PingFederate and PingAccess (pingfederate.lic and pingaccess.lic)
-#   d) the PingAccess Quickstart distribution (eg. pingaccess-quickstart-2.0.0.zip)
+#   d) the PingAccess Quickstart distribution (eg. pingaccess-quickstart-2.1.0.zip)
 #
 ##########################################################################
 
@@ -72,9 +72,17 @@ python ${QSBASE}/paconfig.py
 
 rm -rf ${QSBASE}
 
-pf_deploy_browser_open https://localhost:3000/headers
+WAM_URL=https://localhost:3000/PingAccessQuickStart/
+API_URL=https://localhost:3000/PingAccessQuickStart/api/headers
 
-URL=https://localhost:3000/api/headers
+MAJOR=`echo ${QSBASE} | cut -d"-" -f3 | cut -d"." -f 1`
+MINOR=`echo ${QSBASE} | cut -d"-" -f3 | cut -d"." -f 2`
+if [[ ${MAJOR} -lt "2" || ( ${MAJOR} -eq "2" && ${MINOR} -lt "1" ) ]] ; then
+	WAM_URL=https://localhost:3000/headers
+	API_URL=https://localhost:3000/api/headers
+fi
+
+pf_deploy_browser_open ${WAM_URL}
 
 echo
 echo " # Unauthorized access, should fail:"
@@ -92,6 +100,6 @@ echo ${TOKEN}
 echo
 
 echo " # Authorized access, should return JSON with headers:"
-curl -k -s -H "Authorization: Bearer ${TOKEN}" ${URL}
+curl -k -s -H "Authorization: Bearer ${TOKEN}" ${API_URL}
 echo
 echo

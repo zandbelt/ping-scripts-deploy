@@ -246,7 +246,11 @@ pf_deploy_launch() {
 pa_deploy_launch() {
 	local BASE=$1
 	if [ -z $2 ] ; then
-		pf_deploy_launch_and_wait ${BASE} ./run.sh PingAccess logs/boot.log "PingAccess running"				
+		SCRIPT=bin/run.sh
+		MAJOR=`echo ${BASE} | cut -d"-" -f2 | cut -d"." -f 1`
+		MINOR=`echo ${BASE} | cut -d"-" -f2 | cut -d"." -f 2`
+		if [[ ${MAJOR} -lt "2" || ( ${MAJOR} -eq "2" && ${MINOR} -lt "1" ) ]] ; then SCRIPT=run.sh; fi
+		pf_deploy_launch_and_wait ${BASE} ${SCRIPT} PingAccess logs/boot.log "PingAccess running"				
 		pf_deploy_browser_open https://localhost:9000
 	fi
 }
