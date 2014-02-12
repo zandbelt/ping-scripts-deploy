@@ -86,7 +86,7 @@ pf_deploy_browser_open ${WAM_URL}
 
 echo
 echo " # Unauthorized access, should fail:"
-curl -k ${URL}
+curl -4 -k ${API_URL}
 echo
 
 RESPONSE=`curl -k -s -X POST -d "client_id=api_client&grant_type=password&username=joe&password=2Access&scope=edit" -k https://localhost:9031/as/token.oauth2`
@@ -100,6 +100,6 @@ echo ${TOKEN}
 echo
 
 echo " # Authorized access, should return JSON with headers:"
-curl -k -s -H "Authorization: Bearer ${TOKEN}" ${API_URL}
+curl -4 -k -s -H "Authorization: Bearer ${TOKEN}" ${API_URL}
 echo
 echo
