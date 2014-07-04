@@ -43,7 +43,7 @@ pf_deploy_unzip() {
 	local NAME=$1
 	local DESC=$2
 	local DIR
-	ZIP=`find . -name "${NAME}-[0-9]*.zip" -print -prune`
+	ZIP=`find . -maxdepth 1 -name "${NAME}-[0-9]*.zip" -print -prune`
 	if [ -z ${ZIP} ] ; then echo " The $DESC distribution is missing: download it to this directory first." ; exit ; fi
 	BASE=`basename ${ZIP} .zip`
 	if [ ! -z $3 ] ; then DIR="-d ${BASE}" ; fi
