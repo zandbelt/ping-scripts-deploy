@@ -36,16 +36,16 @@
 # Prerequisites:
 # - The (MacPorts) utilities unzip and python must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-7.1.0R2.zip)
-#   b) a PingAccess ZIP distribution (eg. pingaccess-2.1.0.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-7.2.0R.zip)
+#   b) a PingAccess ZIP distribution (eg. pingaccess-3.0.1.zip)
 #   c) valid license files for PingFederate and PingAccess (pingfederate.lic and pingaccess.lic)
-#   d) the PingAccess Quickstart distribution (eg. pingaccess-quickstart-2.1.0.zip)
+#   d) the PingAccess Quickstart distribution (eg. pingaccess-quickstart-3.0.0.zip)
 #
 ##########################################################################
 
 source "$(dirname "$0")/pf-deploy-common.sh"
 
-pf_deploy_utility_check python curl
+pf_deploy_utility_check python
 
 pf_deploy_pingfederate $1
 PFBASE=${BASE}
@@ -54,11 +54,9 @@ pa_deploy_pingaccess $1
 PABASE=${BASE}
 
 QS=pingaccess-quickstart
-pf_deploy_unzip ${QS} "PingAccess Quickstart ZIP" mksubdir
+pf_deploy_unzip ${QS} "PingAccess Quickstart ZIP"
 QSBASE=${BASE}
 
-echo " [${QSBASE}] deploy PingFederate Quickstart JAR files ... "
-cp ${QSBASE}/pf-dist/*.jar ${PFBASE}/pingfederate/server/default/deploy
 echo " [${QSBASE}] deploy PingFederate Quickstart WAR files ... "
 cp -r ${QSBASE}/pf-dist/*.war ${PFBASE}/pingfederate/server/default/deploy
 echo " [${QSBASE}] deploy PingFederate Quickstart data.zip ... "
@@ -68,38 +66,8 @@ pf_deploy_launch ${PFBASE} $1
 pa_deploy_launch ${PABASE} $1
 
 echo " [${QSBASE}] running PingAccess configuration script ... "
-python ${QSBASE}/paconfig.py
+python ${QSBASE}/scripts/quickstart.py
 
 rm -rf ${QSBASE}
 
-WAM_URL=https://localhost:3000/PingAccessQuickStart/
-API_URL=https://localhost:3000/PingAccessQuickStart/api/headers
-
-MAJOR=`echo ${QSBASE} | cut -d"-" -f3 | cut -d"." -f 1`
-MINOR=`echo ${QSBASE} | cut -d"-" -f3 | cut -d"." -f 2`
-if [[ ${MAJOR} -lt "2" || ( ${MAJOR} -eq "2" && ${MINOR} -lt "1" ) ]] ; then
-	WAM_URL=https://localhost:3000/headers
-	API_URL=https://localhost:3000/api/headers
-fi
-
-pf_deploy_browser_open ${WAM_URL}
-
-echo
-echo " # Unauthorized access, should fail:"
-curl -4 -k ${API_URL}
-echo
-
-RESPONSE=`curl -k -s -X POST -d "client_id=api_client&grant_type=password&username=joe&password=2Access&scope=edit" -k https://localhost:9031/as/token.oauth2`
-echo " # get token response:"
-echo ${RESPONSE}
-echo
-
-TOKEN=`expr "${RESPONSE}" : '.*\"access_token\":"\(.*\)"'`
-echo " # token:"
-echo ${TOKEN}
-echo
-
-echo " # Authorized access, should return JSON with headers:"
-curl -4 -k -s -H "Authorization: Bearer ${TOKEN}" ${API_URL}
-echo
-echo
+pf_deploy_browser_open https://localhost:3000/PingAccessQuickStart
