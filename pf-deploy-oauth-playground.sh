@@ -60,7 +60,7 @@ source "$(dirname "$0")/pf-deploy-java-ik.sh" ${PFBASE}
 pf_deploy_unzip OAuthPlayground "OAuth 2.0 Playground ZIP"
 PGBASE=${BASE}
 echo " [${PGBASE}] deploy OAuth Playground files ... "
-cp ${PGBASE}/dist/* ${PFBASE}/pingfederate/server/default/deploy
+cp -r ${PGBASE}/dist/* ${PFBASE}/pingfederate/server/default/deploy
 echo " [${PGBASE}] deploy OAuth Playground data.zip ... "
 unzip -q -o ${PGBASE}/data.zip -d ${PFBASE}/pingfederate/server/default/data
 rm -rf ${PGBASE}
