@@ -150,13 +150,15 @@ cat > ${TMPFILE} <<EOF
 <form method="post" action="${URL}">
 <input name="service" value="direct/0/login/\$Form"/>
 <input name="sp" value="S0"/>
-<input name="Form0" value="\$FormConditional,\$FormConditional\$0,\$FormConditional\$1,username,password,\$Submit"/>
+<input name="Form0" value="cSRFToken,\$FormConditional,\$FormConditional\$0,\$FormConditional\$1,username,password,\$Submit"/>
+<input name="cSRFToken" value="bogus"/>
 <input name="\$FormConditional" value="F"/>
 <input name="\$FormConditional\$0" value="F"/>
 <input name="\$FormConditional\$1" value="T"/>
 <input name="username" value="${ADMIN}"/>
 <input name="password" value="${PASSWD}"/>
 <input name="\$Submit" value="Login"/>
+</form>
 </body></html>
 EOF
 	pf_deploy_browser_open ${TMPFILE}
