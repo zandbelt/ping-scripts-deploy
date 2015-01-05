@@ -147,7 +147,7 @@ pf_deploy_wait_for() {
 	local MATCH=$4
 	echo " [$BASE] waiting for ${TITLE} ... "	
 	while [ ! -r "${FILE}" ] ; do sleep 1 ; done
-	while ! tail ${FILE} | grep -q "${MATCH}" ; do sleep 1; done
+	while ! tail -n 50 ${FILE} | grep -q "${MATCH}" ; do sleep 1; done
 }
 
 pf_deploy_browser_open_admin_login() {
@@ -155,7 +155,7 @@ pf_deploy_browser_open_admin_login() {
 	local USERNAME=$2
 	local PASSWD=$3
 	local PF="https://localhost:9999"
-		local FILENAME="autopost.html"
+	local FILENAME="autopost.html"
 	local TMPFILE="${BASE}/pingfederate/server/default/deploy2/pf-help.war/${FILENAME}"
 cat > ${TMPFILE} <<EOF
 <html>
@@ -166,7 +166,7 @@ function onLoad() {
 }
 </script> </head>
 <body onload="onLoad()">
-Logging in as ${USERNAME}...
+Logging in to the PingFederate Administration Console as ${USERNAME}...
 <form method="post" action="${PF}/pingfederate/app">
 <input type="hidden" name="service" value="direct/0/login/\$Form"/>
 <input type="hidden"name="sp" value="S0"/>
@@ -182,7 +182,7 @@ Logging in as ${USERNAME}...
 </body></html>
 EOF
 	pf_deploy_browser_open "${PF}/pf-help/${FILENAME}"
-	pf_deploy_wait_for "Admin Login" "${BASE}" "${BASE}/pingfederate/log/admin.log" "Login was successful"
+	pf_deploy_wait_for "PingFederate admin login" "${BASE}" "${BASE}/pingfederate/log/admin.log" "Login was successful"
 	rm ${TMPFILE}
 }
 
@@ -205,16 +205,6 @@ EOF
 	else
 		xterm -T ${TITLE} -e "cd ${PWD}/${BASE} && ${SCRIPT} | tee ${LOGFILE}" &
 	fi
-}
-
-pf_deploy_launch_and_wait() {
-	local BASE=$1
-	local SCRIPT=$2
-	local TITLE=$3
-	local LOGFILE=$4
-	local MATCH=$5
-	pf_deploy_launch_terminal ${BASE} ${SCRIPT} ${TITLE} ${LOGFILE}
-	pf_deploy_wait_for "${TITLE}" "${BASE}" "${BASE}/${LOGFILE}" "${MATCH}"
 }
 
 pf_deploy_pingfederate() {
@@ -261,19 +251,75 @@ pf_deploy_launch() {
 	local LOGFILE="pingfederate/log/boot.log"
 	if [ -z $2 ] ; then
 		pf_deploy_launch_terminal "${BASE}" "pingfederate/bin/run.sh" "PingFederate" "${LOGFILE}"
-		pf_deploy_wait_for "PingFederate to startup" "${BASE}" "${BASE}/${LOGFILE}" "PingFederate started in"						
+		pf_deploy_wait_for "PingFederate to startup" "${BASE}" "${BASE}/${LOGFILE}" "PingFederate started in"
 		pf_deploy_browser_open_admin_login ${BASE} "Administrator" "2Federate"
 	fi
 }
 
+pa_deploy_browser_open_admin_login_prepare() {
+	local BASE=$1
+	local USERNAME=$2
+	local PASSWD=$3
+	
+	local PA="https://localhost:9000"
+	local FILENAME="autopost.html"
+	local TMPFILE="com/pingidentity/pa/adminui/docBase/assets/${FILENAME}"
+
+	mkdir -p com/pingidentity/pa/adminui/docBase/assets
+cat > ${TMPFILE} <<EOF
+<html>
+<head><script>
+function login() {
+	// set first login, SLA accepted and no tutorial shown
+	var d = {"email": "","firstLogin": false,"showTutorial": false,"slaAccepted": true,"username":"${USERNAME}"};
+	var r = new XMLHttpRequest();
+	r.open("PUT", "${PA}/pa-admin-api/v1/users", true, "${USERNAME}", "${PASSWD}");
+	r.setRequestHeader("X-XSRF-Header", "PingAccess");
+	r.onreadystatechange = function () {
+    	if (r.readyState == 4) {
+    		// login and get a PingAccess session
+    		d = {"username":"${USERNAME}","password":"${PASSWD}"};
+    		r = new XMLHttpRequest();
+    		r.open("POST", "${PA}/pa-admin-api/v1/login");
+    		r.setRequestHeader("X-XSRF-Header", "PingAccess");
+    		r.onreadystatechange = function () {
+    			if (r.readyState == 4) {
+    				window.location = "${PA}/"
+    			}
+    		}
+		}
+		r.send(JSON.stringify(d));
+	}
+	r.send(JSON.stringify(d));
+}
+</script> </head>
+<body onload="login()">
+Logging in to the PingAccess Administration Console as ${USERNAME}...
+</body></html>
+EOF
+	jar uf ${BASE}/lib/pingaccess-admin-${BASE#pingaccess-}.jar ${TMPFILE}
+	rm -rf com
+}
+
+pa_deploy_browser_open_admin_login_complete() {
+	local BASE=$1
+	
+	local PA="https://localhost:9000"
+	local FILENAME="autopost.html"
+	local TMPFILE="com/pingidentity/pa/adminui/docBase/assets/${FILENAME}"
+
+	pf_deploy_browser_open "${PA}/assets/${FILENAME}"
+	pf_deploy_wait_for "PingAccess admin login" "${BASE}" "${BASE}/log/pingaccess_api_audit.log" "POST| /pa-admin-api/v1/login| 200"
+	zip -q -d ${BASE}/lib/pingaccess-admin-${BASE#pingaccess-}.jar ${TMPFILE}
+}
+
 pa_deploy_launch() {
 	local BASE=$1
+	local LOGFILE="logs/boot.log"
 	if [ -z $2 ] ; then
-		SCRIPT=bin/run.sh
-		MAJOR=`echo ${BASE} | cut -d"-" -f2 | cut -d"." -f 1`
-		MINOR=`echo ${BASE} | cut -d"-" -f2 | cut -d"." -f 2`
-		if [[ ${MAJOR} -lt "2" || ( ${MAJOR} -eq "2" && ${MINOR} -lt "1" ) ]] ; then SCRIPT=run.sh; fi
-		pf_deploy_launch_and_wait ${BASE} ${SCRIPT} PingAccess logs/boot.log "PingAccess running"				
-		pf_deploy_browser_open https://localhost:9000
+		pa_deploy_browser_open_admin_login_prepare ${BASE} "Administrator" "2Access"
+		pf_deploy_launch_terminal "${BASE}" "bin/run.sh" "PingAccess" "${LOGFILE}"
+		pf_deploy_wait_for "PingAccess to startup" "${BASE}" "${BASE}/${LOGFILE}" "PingAccess running"
+		pa_deploy_browser_open_admin_login_complete ${BASE}
 	fi
 }

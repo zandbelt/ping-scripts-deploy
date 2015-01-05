@@ -66,7 +66,8 @@ pf_deploy_launch ${PFBASE} $1
 pa_deploy_launch ${PABASE} $1
 
 echo " [${QSBASE}] running PingAccess configuration script ... "
-python ${QSBASE}/scripts/quickstart.py
+echo " [${QSBASE}] press <Enter> two times to accept the default passwords..."
+echo -e "\n\n\n\n\n\n\n\n\n\n\n\n\nyes" | python ${QSBASE}/scripts/quickstart.py >/dev/null
 
 rm -rf ${QSBASE}
 
