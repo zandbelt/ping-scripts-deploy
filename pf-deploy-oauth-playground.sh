@@ -66,4 +66,4 @@ unzip -q -o ${PGBASE}/data.zip -d ${PFBASE}/pingfederate/server/default/data
 rm -rf ${PGBASE}
 
 pf_deploy_launch ${PFBASE} $1
-
+pf_deploy_browser_open https://localhost:9031/OAuthPlayground
