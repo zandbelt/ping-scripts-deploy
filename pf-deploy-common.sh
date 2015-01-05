@@ -69,9 +69,9 @@ pf_deploy_secondary_port_patch() {
 	local BASE=$1
 	local PORT=$2
 	echo " [${BASE}] patching run.properties for secondary port ${PORT} ... "
-	cat <<EOF | patch -s -p0 ${BASE}/pingfederate/bin/run.properties
---- pingfederate-7.1.1.org/pingfederate/bin/run.properties	2013-11-07 17:20:18.000000000 +0100
-+++ pingfederate-7.1.1/pingfederate/bin/run.properties	2013-11-16 23:59:41.000000000 +0100
+cat <<EOF | patch -s -p0 -d ${BASE} pingfederate/bin/run.properties
+--- pingfederate/bin/run.properties.org
++++ pingfederate/bin/run.properties
 @@ -101,7 +101,7 @@
  # authentication or for SAML back-channel authentication, you must use this 
  # port for security reasons (or use a similarly configured new listener, 
