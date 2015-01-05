@@ -140,28 +140,50 @@ pf_deploy_browser_open() {
 	fi
 }
 
+pf_deploy_wait_for() {
+	local TITLE=$1
+	local BASE=$2
+	local FILE=$3
+	local MATCH=$4
+	echo " [$BASE] waiting for ${TITLE} ... "	
+	while [ ! -r "${FILE}" ] ; do sleep 1 ; done
+	while ! tail ${FILE} | grep -q "${MATCH}" ; do sleep 1; done
+}
+
 pf_deploy_browser_open_admin_login() {
-	local URL=https://localhost:9999/pingfederate/app
-	local ADMIN=administrator
-	local PASSWD=2Federate
-	local TMPFILE=/tmp/autopost.html
+	local BASE=$1
+	local USERNAME=$2
+	local PASSWD=$3
+	local PF="https://localhost:9999"
+		local FILENAME="autopost.html"
+	local TMPFILE="${BASE}/pingfederate/server/default/deploy2/pf-help.war/${FILENAME}"
 cat > ${TMPFILE} <<EOF
-<html><body onload="document.forms[0].submit()">
-<form method="post" action="${URL}">
-<input name="service" value="direct/0/login/\$Form"/>
-<input name="sp" value="S0"/>
-<input name="Form0" value="cSRFToken,\$FormConditional,\$FormConditional\$0,\$FormConditional\$1,username,password,\$Submit"/>
-<input name="cSRFToken" value="bogus"/>
-<input name="\$FormConditional" value="F"/>
-<input name="\$FormConditional\$0" value="F"/>
-<input name="\$FormConditional\$1" value="T"/>
-<input name="username" value="${ADMIN}"/>
-<input name="password" value="${PASSWD}"/>
-<input name="\$Submit" value="Login"/>
+<html>
+<head><script>
+function onLoad() {
+	document.cookie="PFCSRF=bogus; path=/";
+	document.forms[0].submit();
+}
+</script> </head>
+<body onload="onLoad()">
+Logging in as ${USERNAME}...
+<form method="post" action="${PF}/pingfederate/app">
+<input type="hidden" name="service" value="direct/0/login/\$Form"/>
+<input type="hidden"name="sp" value="S0"/>
+<input type="hidden"name="Form0" value="cSRFToken,\$FormConditional,\$FormConditional\$0,\$FormConditional\$1,username,password,\$Submit"/>
+<input type="hidden"name="cSRFToken" value="bogus"/>
+<input type="hidden"name="\$FormConditional" value="F"/>
+<input type="hidden"name="\$FormConditional\$0" value="F"/>
+<input type="hidden"name="\$FormConditional\$1" value="T"/>
+<input type="hidden"name="username" value="${USERNAME}"/>
+<input type="hidden"name="password" value="${PASSWD}"/>
+<input type="hidden"name="\$Submit" value="Login"/>
 </form>
 </body></html>
 EOF
-	pf_deploy_browser_open ${TMPFILE}
+	pf_deploy_browser_open "${PF}/pf-help/${FILENAME}"
+	pf_deploy_wait_for "Admin Login" "${BASE}" "${BASE}/pingfederate/log/admin.log" "Login was successful"
+	rm ${TMPFILE}
 }
 
 pf_deploy_launch_terminal() {
@@ -190,12 +212,9 @@ pf_deploy_launch_and_wait() {
 	local SCRIPT=$2
 	local TITLE=$3
 	local LOGFILE=$4
-	local SEARCH=$5
+	local MATCH=$5
 	pf_deploy_launch_terminal ${BASE} ${SCRIPT} ${TITLE} ${LOGFILE}
-	echo " [$BASE] Waiting for ${TITLE} to startup ... "
-	while [ ! -r ${BASE}/${LOGFILE} ] ; do sleep 1 ; done
-	while [ `tail ${BASE}/${LOGFILE} | grep "${SEARCH}"  | wc -l` == 0 ] ; do sleep 1 ; done
-	echo " [$BASE] ${TITLE} started ... "			
+	pf_deploy_wait_for "${TITLE}" "${BASE}" "${BASE}/${LOGFILE}" "${MATCH}"
 }
 
 pf_deploy_pingfederate() {
@@ -238,10 +257,12 @@ pa_deploy_pingaccess() {
 }
 
 pf_deploy_launch() {
-	local BASE=$1
+	local BASE="$1"
+	local LOGFILE="pingfederate/log/boot.log"
 	if [ -z $2 ] ; then
-		pf_deploy_launch_and_wait ${BASE} pingfederate/bin/run.sh PingFederate pingfederate/log/boot.log "PingFederate started in"		
-		pf_deploy_browser_open_admin_login
+		pf_deploy_launch_terminal "${BASE}" "pingfederate/bin/run.sh" "PingFederate" "${LOGFILE}"
+		pf_deploy_wait_for "PingFederate to startup" "${BASE}" "${BASE}/${LOGFILE}" "PingFederate started in"						
+		pf_deploy_browser_open_admin_login ${BASE} "Administrator" "2Federate"
 	fi
 }
 
