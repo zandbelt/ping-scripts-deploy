@@ -263,9 +263,9 @@ pa_deploy_browser_open_admin_login_prepare() {
 	
 	local PA="https://localhost:9000"
 	local FILENAME="autopost.html"
-	local TMPFILE="com/pingidentity/pa/adminui/docBase/assets/${FILENAME}"
+	local TMPFILE="com/pingidentity/pa/adminui/webapp/assets/${FILENAME}"
 
-	mkdir -p com/pingidentity/pa/adminui/docBase/assets
+	mkdir -p `dirname ${TMPFILE}`
 cat > ${TMPFILE} <<EOF
 <html>
 <head><script>
@@ -297,7 +297,7 @@ function login() {
 Logging in to the PingAccess Administration Console as ${USERNAME}...
 </body></html>
 EOF
-	jar uf ${BASE}/lib/pingaccess-admin-${BASE#pingaccess-}.jar ${TMPFILE}
+	jar uf ${BASE}/lib/pingaccess-admin-ui-${BASE#pingaccess-}.1.jar ${TMPFILE}
 	rm -rf com
 }
 
