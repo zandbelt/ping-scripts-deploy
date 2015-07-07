@@ -45,7 +45,7 @@
 
 source "$(dirname "$0")/pf-deploy-common.sh"
 
-pf_deploy_utility_check python
+pf_deploy_utility_check python2.7
 
 pf_deploy_pingfederate $1
 PFBASE=${BASE}
@@ -67,7 +67,7 @@ pa_deploy_launch ${PABASE} $1
 
 echo " [${QSBASE}] running PingAccess configuration script ... "
 echo " [${QSBASE}] press <Enter> two times to accept the default passwords..."
-echo -e "\n\n\n\n\n\n\n\n\n\n\n\n\nyes" | python ${QSBASE}/scripts/quickstart.py >/dev/null
+echo -e "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nyes" | python2.7 ${QSBASE}/scripts/quickstart.py >/dev/null
 
 rm -rf ${QSBASE}
 

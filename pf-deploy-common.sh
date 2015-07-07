@@ -150,13 +150,16 @@ pf_deploy_wait_for() {
 	while ! tail -n 50 ${FILE} | grep -q "${MATCH}" ; do sleep 1; done
 }
 
-pf_deploy_browser_open_admin_login() {
+pf_deploy_browser_open_admin_login_prepare() {
 	local BASE=$1
 	local USERNAME=$2
 	local PASSWD=$3
 	local PF="https://localhost:9999"
 	local FILENAME="autopost.html"
-	local TMPFILE="${BASE}/pingfederate/server/default/deploy2/pf-help.war/${FILENAME}"
+	local TMPFILE="api-docs/${FILENAME}"
+		
+	mkdir -p `dirname ${TMPFILE}`
+		
 cat > ${TMPFILE} <<EOF
 <html>
 <head><script>
@@ -181,9 +184,20 @@ Logging in to the PingFederate Administration Console as ${USERNAME}...
 </form>
 </body></html>
 EOF
-	pf_deploy_browser_open "${PF}/pf-help/${FILENAME}"
+	jar uf ${BASE}/pingfederate/server/default/deploy2/pf-admin-api.war ${TMPFILE}
+	rm -rf api-docs
+}
+
+pf_deploy_browser_open_admin_login_complete() {
+	local BASE=$1
+
+	local PF="https://localhost:9999"
+	local FILENAME="autopost.html"
+	local TMPFILE="api-docs/${FILENAME}"
+		
+	pf_deploy_browser_open "${PF}/pf-admin-api/api-docs/${FILENAME}"
 	pf_deploy_wait_for "PingFederate admin login" "${BASE}" "${BASE}/pingfederate/log/admin.log" "Login was successful"
-	rm ${TMPFILE}
+	zip -q -d ${BASE}/pingfederate/server/default/deploy2/pf-admin-api.war ${TMPFILE}
 }
 
 pf_deploy_launch_terminal() {
@@ -250,9 +264,10 @@ pf_deploy_launch() {
 	local BASE="$1"
 	local LOGFILE="pingfederate/log/boot.log"
 	if [ -z $2 ] ; then
+		pf_deploy_browser_open_admin_login_prepare ${BASE} "Administrator" "2Federate"
 		pf_deploy_launch_terminal "${BASE}" "pingfederate/bin/run.sh" "PingFederate" "${LOGFILE}"
 		pf_deploy_wait_for "PingFederate to startup" "${BASE}" "${BASE}/${LOGFILE}" "PingFederate started in"
-		pf_deploy_browser_open_admin_login ${BASE} "Administrator" "2Federate"
+		pf_deploy_browser_open_admin_login_complete "${BASE}"
 	fi
 }
 
@@ -297,7 +312,7 @@ function login() {
 Logging in to the PingAccess Administration Console as ${USERNAME}...
 </body></html>
 EOF
-	jar uf ${BASE}/lib/pingaccess-admin-ui-${BASE#pingaccess-}.1.jar ${TMPFILE}
+	jar uf `find ${BASE}/lib/pingaccess-admin-ui* -print` ${TMPFILE}
 	rm -rf com
 }
 
@@ -306,11 +321,11 @@ pa_deploy_browser_open_admin_login_complete() {
 	
 	local PA="https://localhost:9000"
 	local FILENAME="autopost.html"
-	local TMPFILE="com/pingidentity/pa/adminui/docBase/assets/${FILENAME}"
+	local TMPFILE="com/pingidentity/pa/adminui/webapp/assets/${FILENAME}"
 
 	pf_deploy_browser_open "${PA}/assets/${FILENAME}"
 	pf_deploy_wait_for "PingAccess admin login" "${BASE}" "${BASE}/log/pingaccess_api_audit.log" "POST| /pa-admin-api/v1/login| 200"
-	zip -q -d ${BASE}/lib/pingaccess-admin-${BASE#pingaccess-}.jar ${TMPFILE}
+	zip -q -d `find ${BASE}/lib/pingaccess-admin-ui* -print` ${TMPFILE}
 }
 
 pa_deploy_launch() {
