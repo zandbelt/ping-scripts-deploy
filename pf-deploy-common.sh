@@ -278,7 +278,7 @@ pa_deploy_browser_open_admin_login_prepare() {
 	
 	local PA="https://localhost:9000"
 	local FILENAME="autopost.html"
-	local TMPFILE="com/pingidentity/pa/adminui/webapp/assets/${FILENAME}"
+	local TMPFILE="com/pingidentity/pa/adminui/frontend/dist/${FILENAME}"
 
 	mkdir -p `dirname ${TMPFILE}`
 cat > ${TMPFILE} <<EOF
@@ -288,14 +288,14 @@ function login() {
 	// set first login, SLA accepted and no tutorial shown
 	var d = {"email": "","firstLogin": false,"showTutorial": false,"slaAccepted": true,"username":"${USERNAME}"};
 	var r = new XMLHttpRequest();
-	r.open("PUT", "${PA}/pa-admin-api/v1/users", true, "${USERNAME}", "${PASSWD}");
+	r.open("PUT", "${PA}/pa-admin-api/v2/users/1", true, "${USERNAME}", "${PASSWD}");
 	r.setRequestHeader("X-XSRF-Header", "PingAccess");
 	r.onreadystatechange = function () {
     	if (r.readyState == 4) {
     		// login and get a PingAccess session
     		d = {"username":"${USERNAME}","password":"${PASSWD}"};
     		r = new XMLHttpRequest();
-    		r.open("POST", "${PA}/pa-admin-api/v1/login");
+    		r.open("POST", "${PA}/pa-admin-api/v2/login");
     		r.setRequestHeader("X-XSRF-Header", "PingAccess");
     		r.onreadystatechange = function () {
     			if (r.readyState == 4) {
@@ -321,10 +321,10 @@ pa_deploy_browser_open_admin_login_complete() {
 	
 	local PA="https://localhost:9000"
 	local FILENAME="autopost.html"
-	local TMPFILE="com/pingidentity/pa/adminui/webapp/assets/${FILENAME}"
+	local TMPFILE="com/pingidentity/pa/adminui/frontend/dist/${FILENAME}"
 
-	pf_deploy_browser_open "${PA}/assets/${FILENAME}"
-	pf_deploy_wait_for "PingAccess admin login" "${BASE}" "${BASE}/log/pingaccess_api_audit.log" "POST| /pa-admin-api/v1/login| 200"
+	pf_deploy_browser_open "${PA}/dist/${FILENAME}"
+	pf_deploy_wait_for "PingAccess admin login" "${BASE}" "${BASE}/log/pingaccess_api_audit.log" "POST| /pa-admin-api/v2/login| 200"
 	zip -q -d `find ${BASE}/lib/pingaccess-admin-ui* -print` ${TMPFILE}
 }
 
