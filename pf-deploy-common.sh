@@ -1,6 +1,6 @@
 #!/bin/bash
 ###########################################################################
-# Copyright (C) 2013-2015 Ping Identity Corporation
+# Copyright (C) 2013-2016 Ping Identity Corporation
 # All rights reserved.
 #
 # The contents of this file are the property of Ping Identity Corporation.
@@ -10,7 +10,7 @@
 # 1099 18th St Suite 2950
 # Denver, CO 80202
 # 303.468.2900
-#       http://www.pingidentity.com
+# http://www.pingidentity.com
 #
 # DISCLAIMER OF WARRANTIES:
 #
@@ -81,6 +81,23 @@ cat <<EOF | patch -s -p0 -d ${BASE} pingfederate/bin/run.properties
  # 
  # This property defines the IP address over which the PingFederate server 
  # communicates with partner federation gateways. Use for deployments where 
+EOF
+}
+
+pf_deploy_ciphers_patch() {
+	local BASE=$1
+	echo " [${BASE}] patching com.pingidentity.crypto.SunJCEManager.xml for cipher suite... "
+	cat <<EOF | patch -s -p0 ${BASE}/pingfederate/server/default/data/config-store/com.pingidentity.crypto.SunJCEManager.xml
+96a97
+> 	<!--
+102a104,110
+> 	-->
+>         <con:item name="TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA"/>
+>         <con:item name="TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"/>
+>         <con:item name="TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA"/>
+>         <con:item name="TLS_ECDH_RSA_WITH_AES_128_CBC_SHA"/>
+>         <con:item name="TLS_RSA_WITH_AES_128_CBC_SHA"/>
+> 
 EOF
 }
 

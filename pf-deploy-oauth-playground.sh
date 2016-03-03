@@ -1,6 +1,6 @@
 #!/bin/bash
 ###########################################################################
-# Copyright (C) 2013-2015 Ping Identity Corporation
+# Copyright (C) 2013-2016 Ping Identity Corporation
 # All rights reserved.
 #
 # The contents of this file are the property of Ping Identity Corporation.
@@ -10,7 +10,7 @@
 # 1099 18th St Suite 2950
 # Denver, CO 80202
 # 303.468.2900
-#       http://www.pingidentity.com
+# http://www.pingidentity.com
 #
 # DISCLAIMER OF WARRANTIES:
 #
@@ -64,6 +64,8 @@ cp -r ${PGBASE}/dist/* ${PFBASE}/pingfederate/server/default/deploy
 echo " [${PGBASE}] deploy OAuth Playground data.zip ... "
 unzip -q -o ${PGBASE}/data.zip -d ${PFBASE}/pingfederate/server/default/data
 rm -rf ${PGBASE}
+
+pf_deploy_ciphers_patch ${PFBASE}
 
 pf_deploy_launch ${PFBASE} $1
 pf_deploy_browser_open https://localhost:9031/OAuthPlayground
