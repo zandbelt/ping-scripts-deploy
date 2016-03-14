@@ -40,7 +40,7 @@ Deploys PingFederate (pingfederate-x.x.x.zip) and the Quickstart (pf-quickstart-
 *Depends on: `pf-deploy-common.sh`*
  
 - `pf-deploy-oauth-playground.sh`  
-Deploys PingFederate (pingfederate-x.x.x.zip) and the OAuth 2.0 Playground (OAuthPlayground-x.x.x.zip)
+Deploys PingFederate (pingfederate-x.x.x.zip) and the OAuth 2.0 Playground (OAuthPlayground-x.x.x.zip).  
 *Depends on: `pf-deploy-common.sh`*
 
 - `pf-deploy-agentless-ik.sh`  
