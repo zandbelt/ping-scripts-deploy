@@ -40,10 +40,8 @@ Deploys PingFederate (pingfederate-x.x.x.zip) and the Quickstart (pf-quickstart-
 *Depends on: `pf-deploy-common.sh`*
  
 - `pf-deploy-oauth-playground.sh`  
-Deploys PingFederate (pingfederate-x.x.x.zip), the OAuth 2.0 Playground (OAuthPlayground-x.x.x.zip)
-and the Java Integration Kit (pf-Java-integration-kit-x.x.x.zip); the latter is required by the
-OAuth 2.0 Playground.  
-*Depends on: `pf-deploy-java-ik.sh` and `pf-deploy-common.sh`*
+Deploys PingFederate (pingfederate-x.x.x.zip) and the OAuth 2.0 Playground (OAuthPlayground-x.x.x.zip)
+*Depends on: `pf-deploy-common.sh`*
 
 - `pf-deploy-agentless-ik.sh`  
 Deploys PingFederate (pingfederate-x.x.x.zip), the Agentless Integration Kit and the
@@ -63,7 +61,7 @@ the PingAccess Quickstart applications (pingaccess-quickstart-x.x.x.zip).
 Disclaimer
 ----------
     /***************************************************************************
-     * Copyright (C) 2014-2015 Ping Identity Corporation
+     * Copyright (C) 2014-2016 Ping Identity Corporation
      * All rights reserved.
      *
      *      Ping Identity Corporation
