@@ -55,7 +55,8 @@ cp ${JIK}/dist/*.jar ${PFBASE}/pingfederate/server/default/deploy
 echo " [${BASE}] deploy Java IK sample WARs ... "
 cp -r ${JIK}/sample/*.war ${PFBASE}/pingfederate/server/default/deploy
 echo " [${BASE}] deploy Java IK data.zip ... "
-unzip -q -o ${JIK}/sample/data.zip -d ${PFBASE}/pingfederate/server/default/data
+cp ${JIK}/sample/data.zip ${PFBASE}/pingfederate/server/default/data/drop-in-deployer/
+chmod a+rw ${PFBASE}/pingfederate/server/default/data/drop-in-deployer/data.zip
 rm -rf ${JIK}
 
 pf_deploy_launch ${PFBASE} $1
