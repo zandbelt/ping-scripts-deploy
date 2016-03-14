@@ -1,6 +1,6 @@
 #!/bin/bash
 ###########################################################################
-# Copyright (C) 2013-2015 Ping Identity Corporation
+# Copyright (C) 2013-2016 Ping Identity Corporation
 # All rights reserved.
 #
 # The contents of this file are the property of Ping Identity Corporation.
@@ -56,7 +56,7 @@ cp ${QSBASE}/dist/*.jar ${PFBASE}/pingfederate/server/default/deploy
 echo " [${QSBASE}] deploy Quickstart WAR files ... "
 cp -r ${QSBASE}/dist/*.war ${PFBASE}/pingfederate/server/default/deploy
 echo " [${QSBASE}] deploy Quickstart data.zip ... "
-unzip -q -o ${QSBASE}/dist/data.zip -d ${PFBASE}/pingfederate/server/default/data
+cp ${QSBASE}/dist/data.zip ${PFBASE}/pingfederate/server/default/data/drop-in-deployer/
 
 rm -rf ${QSBASE}
 

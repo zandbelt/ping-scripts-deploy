@@ -1,6 +1,6 @@
 #!/bin/bash
 ###########################################################################
-# Copyright (C) 2013-2015 Ping Identity Corporation
+# Copyright (C) 2013-2016 Ping Identity Corporation
 # All rights reserved.
 #
 # The contents of this file are the property of Ping Identity Corporation.
@@ -66,7 +66,7 @@ echo " [${BASE}] patch Agentless IK sample SP configuration ... "
 sed -i "" s#FULL/PATH/TO/CERTIFICATES#"${DIR}/${PFBASE}/pingfederate/server/default/deploy/AgentlessIntegrationKitSampleSP"#g ${PFBASE}/pingfederate/server/default/deploy/AgentlessIntegrationKitSampleSP/configuration.jsp
 sed -i "" s#FULL/PATH/TO/CERTIFICATES#"${DIR}/${PFBASE}/pingfederate/server/default/deploy/AgentlessIntegrationKitSampleIDP"#g ${PFBASE}/pingfederate/server/default/deploy/AgentlessIntegrationKitSampleIDP/configuration.jsp
 echo " [${BASE}] deploy Agentless IK data.zip ... "
-unzip -q -o ${AIK}/Samples/data.zip -d ${PFBASE}/pingfederate/server/default/data
+cp ${AIK}/Samples/data.zip ${PFBASE}/pingfederate/server/default/data/drop-in-deployer/
 rm -rf ${AIK}
 
 pf_deploy_launch ${PFBASE} $1
