@@ -37,10 +37,9 @@
 # Prerequisites:
 # - The (MacPorts) utility unzip must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-7.2.0.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-8.1.1.zip)
 #   b) a valid license file (pingfederate.lic)
-#   c) the Java Integration Kit (eg. pf-Java-integration-kit-2.5.1.zip)
-#   d) the OAuth Playground (eg. OAuthPlayground-3.2.0.zip)
+#   c) the OAuth Playground (eg. OAuthPlayground-3.2.0.zip)
 #
 ##########################################################################
 
@@ -51,10 +50,6 @@ source "$(dirname "$0")/pf-deploy-common.sh"
 pf_deploy_pingfederate $1
 PFBASE=${BASE}
 
-# Java Integration Kit
-
-source "$(dirname "$0")/pf-deploy-java-ik.sh" ${PFBASE}
-
 # OAuth Playground
 
 pf_deploy_unzip OAuthPlayground "OAuth 2.0 Playground ZIP"
@@ -62,7 +57,7 @@ PGBASE=${BASE}
 echo " [${PGBASE}] deploy OAuth Playground files ... "
 cp -r ${PGBASE}/dist/* ${PFBASE}/pingfederate/server/default/deploy
 echo " [${PGBASE}] deploy OAuth Playground data.zip ... "
-unzip -q -o ${PGBASE}/data.zip -d ${PFBASE}/pingfederate/server/default/data
+cp ${PGBASE}/data.zip ${PFBASE}/pingfederate/server/default/data/drop-in-deployer/
 rm -rf ${PGBASE}
 
 pf_deploy_ciphers_patch ${PFBASE}
