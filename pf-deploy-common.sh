@@ -283,7 +283,7 @@ pf_deploy_launch() {
 	if [ -z $2 ] ; then
 		pf_deploy_browser_open_admin_login_prepare ${BASE} "Administrator" "2Federate"
 		pf_deploy_launch_terminal "${BASE}" "pingfederate/bin/run.sh" "PingFederate" "${LOGFILE}"
-		pf_deploy_wait_for "PingFederate to startup" "${BASE}" "${BASE}/${LOGFILE}" "PingFederate started in"
+		pf_deploy_wait_for "PingFederate to startup" "${BASE}" "${BASE}/${LOGFILE}" "Configuration update is completed."
 		pf_deploy_browser_open_admin_login_complete "${BASE}"
 	fi
 }
