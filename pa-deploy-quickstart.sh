@@ -34,12 +34,12 @@
 # This script deploys PingFederate, PingAccess and the PingAccess Quickstart demo.
 #
 # Prerequisites:
-# - The (MacPorts) utilities unzip and python must be installed.
+# - The (MacPorts) utilities unzip and python 2.7 must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-7.2.0R.zip)
-#   b) a PingAccess ZIP distribution (eg. pingaccess-3.0.1.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-8.1.3.zip)
+#   b) a PingAccess ZIP distribution (eg. pingaccess-4.0.2.zip)
 #   c) valid license files for PingFederate and PingAccess (pingfederate.lic and pingaccess.lic)
-#   d) the PingAccess Quickstart distribution (eg. pingaccess-quickstart-3.0.0.zip)
+#   d) the PingAccess Quickstart distribution (eg. pingaccess-quickstart-4.0.0.zip)
 #
 ##########################################################################
 
