@@ -70,17 +70,17 @@ pf_deploy_secondary_port_patch() {
 	local PORT=$2
 	echo " [${BASE}] patching run.properties for secondary port ${PORT} ... "
 cat <<EOF | patch -s -p0 -d ${BASE} pingfederate/bin/run.properties
---- pingfederate/bin/run.properties.org
+--- pingfederate/bin/run.properties.orig
 +++ pingfederate/bin/run.properties
-@@ -101,7 +101,7 @@
+@@ -119,7 +119,7 @@
  # authentication or for SAML back-channel authentication, you must use this 
  # port for security reasons (or use a similarly configured new listener, 
  # with either "WantClientAuth" or "NeedClientAuth" set to "true".
 -pf.secondary.https.port=-1
 +pf.secondary.https.port=9032
- # 
+ 
+ #
  # This property defines the IP address over which the PingFederate server 
- # communicates with partner federation gateways. Use for deployments where 
 EOF
 }
 
@@ -279,7 +279,7 @@ pa_deploy_pingaccess() {
 
 pf_deploy_launch() {
 	local BASE="$1"
-	local LOGFILE="pingfederate/log/boot.log"
+	local LOGFILE="pingfederate/log/server.log"
 	if [ -z $2 ] ; then
 		pf_deploy_browser_open_admin_login_prepare ${BASE} "Administrator" "2Federate"
 		pf_deploy_launch_terminal "${BASE}" "pingfederate/bin/run.sh" "PingFederate" "${LOGFILE}"
