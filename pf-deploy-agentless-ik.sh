@@ -37,9 +37,9 @@
 # Prerequisites:
 # - The (MacPorts) utilities unzip and sed must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-7.1.1.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-8.2.0.zip)
 #   b) a valid license file (pingfederate.lic)
-#   c) the Agentless Integration Kit (eg. pf-agentless-integration-kit-1.2.zip)
+#   c) the Agentless Integration Kit (eg. Agentless-Integration-Kit-1-2-1.zip)
 #
 ##########################################################################
 
@@ -53,7 +53,7 @@ DIR=`pwd`
 pf_deploy_secondary_port_patch ${PFBASE} 9032
 
 AIK=pf-agentless-integration-kit
-pf_deploy_unzip ${AIK} "Agentless Integration Kit ZIP"
+pf_deploy_unzip "Agentless-Integration-Kit" "Agentless Integration Kit ZIP"
 
 echo " [${BASE}] deploy Agentless IK JAR files ... "
 cp ${AIK}/dist/*.jar ${PFBASE}/pingfederate/server/default/deploy
@@ -68,6 +68,36 @@ sed -i "" s#FULL/PATH/TO/CERTIFICATES#"${DIR}/${PFBASE}/pingfederate/server/defa
 echo " [${BASE}] deploy Agentless IK data.zip ... "
 cp ${AIK}/Samples/data.zip ${PFBASE}/pingfederate/server/default/data/drop-in-deployer/
 rm -rf ${AIK}
+
+echo " [${BASE}] patch SubmitToSP.jsp for Java 8 ... "
+cat <<EOF | patch -s -p0 ${PFBASE}/pingfederate/server/default/deploy/AgentlessIntegrationKitSampleIdP/SubmitToSP.jsp
+--- pingfederate/server/default/deploy/AgentlessIntegrationKitSampleIdP/SubmitToSP.jsp.orig
++++ pingfederate/server/default/deploy/AgentlessIntegrationKitSampleIdP/SubmitToSP.jsp
+@@ -99,7 +99,7 @@
+ 	{
+ 		// 3A - Authenticate using HTTP Basic Authentication; values Base64 encoded
+ 		String basicAuth = REFID_USERNAME + ":" + REFID_PASSWORD;
+-		urlConnection.setRequestProperty("Authorization", "Basic " + Base64.encodeBase64String(basicAuth.getBytes()));
++		urlConnection.setRequestProperty("Authorization", "Basic " + org.apache.commons.codec.binary.Base64.encodeBase64String(basicAuth.getBytes()));
+ 	}
+ 	else
+ 	{
+EOF
+
+echo " [${BASE}] patch ShowAttributes.jsp for Java 8 ... "
+cat <<EOF | patch -s -p0 ${PFBASE}/pingfederate/server/default/deploy/AgentlessIntegrationKitSampleSP/ShowAttributes.jsp
+--- pingfederate/server/default/deploy/AgentlessIntegrationKitSampleSP/ShowAttributes.jsp.orig
++++ pingfederate/server/default/deploy/AgentlessIntegrationKitSampleSP/ShowAttributes.jsp
+@@ -139,7 +139,7 @@
+ 	{
+ 		// 3A - Authenticate using HTTP Basic Authentication; values Base64 encoded
+ 		String basicAuth = REFID_USERNAME + ":" + REFID_PASSWORD;
+-		urlConnection.setRequestProperty("Authorization", "Basic " + Base64.encodeBase64String(basicAuth.getBytes()));
++		urlConnection.setRequestProperty("Authorization", "Basic " + org.apache.commons.codec.binary.Base64.encodeBase64String(basicAuth.getBytes()));
+ 	}
+ 	else
+ 	{
+EOF
 
 pf_deploy_launch ${PFBASE} $1
 pf_deploy_browser_open https://localhost:9031/AgentlessIntegrationKitSampleSP
