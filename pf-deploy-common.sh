@@ -101,6 +101,44 @@ pf_deploy_ciphers_patch() {
 EOF
 }
 
+pf_deploy_logging_patch() {
+	local BASE=$1
+	echo " [${BASE}] patching log level... "
+	cat <<EOF | patch -s -p0 ${BASE}/pingfederate/server/default/conf/log4j2.xml
+--- pingfederate-8.2.0.org/pingfederate/server/default/conf/log4j2.xml
++++ pingfederate-8.2.0/pingfederate/server/default/conf/log4j2.xml
+@@ -999,7 +999,7 @@
+ 
+         <Logger name="httpclient.wire.content" level="INFO" />
+         <Logger name="com.pingidentity.pf.email" level="INFO" />
+-        <Logger name="org.sourceid" level="INFO" />
++        <Logger name="org.sourceid" level="DEBUG" />
+         <Logger name="org.sourceid.saml20.util.SystemUtil" level="INFO" additivity="false">
+             <AppenderRef ref="CONSOLE" />
+             <AppenderRef ref="FILE" />
+@@ -1009,7 +1009,7 @@
+         <!-- Adjust the priority value to DEBUG to get additional logging to help troubleshoot XML Signature problems -->
+         <Logger name="org.sourceid.common.dsig" level="INFO" />
+         <Logger name="org.sourceid.saml20.domain.mgmt.impl.PluginSupport" level="INFO" />
+-        <Logger name="com.pingidentity" level="INFO" />
++        <Logger name="com.pingidentity" level="DEBUG" />
+         <Logger name="com.pingidentity.common.util.ErrorHandler" level="INFO" additivity="false">
+             <AppenderRef ref="CONSOLE" />
+             <AppenderRef ref="FILE" />
+@@ -1229,8 +1229,8 @@
+ 
+             For database logging, comment the <AsyncRoot> block and uncomment the <Root> block.
+         -->
+-        <AsyncRoot level="INFO" includeLocation="false">
+-            <!-- <AppenderRef ref="CONSOLE" /> -->
++        <AsyncRoot level="DEBUG" includeLocation="false">
++            <AppenderRef ref="CONSOLE" />
+             <AppenderRef ref="FILE" />
+         </AsyncRoot>
+ 
+EOF
+}
+
 pf_deploy_license_copy() {
 	local BASE=$1
 	echo " [${BASE}] copying license file ... "
@@ -248,6 +286,7 @@ pf_deploy_pingfederate() {
 		# pf_deploy_runsh_jvm_patch ${BASE}
 		pf_deploy_license_copy ${BASE}
 		pf_deploy_set_first_login_done ${BASE}
+		pf_deploy_logging_patch ${BASE}
 		pf_deploy_set_default_admin_password ${BASE}
 	else
 		BASE=$1
