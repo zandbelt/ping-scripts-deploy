@@ -37,7 +37,7 @@
 # Prerequisites:
 # - The (MacPorts) utilities unzip and sed must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-8.2.0.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-8.2.1.zip)
 #   b) a valid license file (pingfederate.lic)
 #   c) the Agentless Integration Kit (eg. Agentless-Integration-Kit-1-2-1.zip)
 #

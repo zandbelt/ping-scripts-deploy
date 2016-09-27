@@ -36,7 +36,7 @@
 # Prerequisites:
 # - The (MacPorts) utility unzip must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-7.1.1.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-8.2.1.zip)
 #   b) a valid license file (pingfederate.lic)
 #   c) the Quickstart distribution (eg. pf-quickstart-1.1.zip)
 #
@@ -61,3 +61,7 @@ cp ${QSBASE}/dist/data.zip ${PFBASE}/pingfederate/server/default/data/drop-in-de
 rm -rf ${QSBASE}
 
 pf_deploy_launch ${PFBASE} $1
+
+pf_deploy_browser_open https://localhost:9031/quickstart-app-sp
+
+

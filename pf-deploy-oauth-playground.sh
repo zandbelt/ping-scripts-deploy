@@ -37,9 +37,9 @@
 # Prerequisites:
 # - The (MacPorts) utility unzip must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-8.1.1.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-8.2.1.zip)
 #   b) a valid license file (pingfederate.lic)
-#   c) the OAuth Playground (eg. OAuthPlayground-3.2.0.zip)
+#   c) the OAuth Playground (eg. OAuthPlayground-3.3.0.zip)
 #
 ##########################################################################
 

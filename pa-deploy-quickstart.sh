@@ -36,10 +36,10 @@
 # Prerequisites:
 # - The (MacPorts) utilities unzip and python 2.7 must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-8.1.3.zip)
-#   b) a PingAccess ZIP distribution (eg. pingaccess-4.0.2.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-8.2.1.zip)
+#   b) a PingAccess ZIP distribution (eg. pingaccess-4.1.1.zip)
 #   c) valid license files for PingFederate and PingAccess (pingfederate.lic and pingaccess.lic)
-#   d) the PingAccess Quickstart distribution (eg. pingaccess-quickstart-4.0.0.zip)
+#   d) the PingAccess Quickstart distribution (eg. pingaccess-quickstart-4.1.1.zip)
 #
 ##########################################################################
 
