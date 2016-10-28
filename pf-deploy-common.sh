@@ -105,33 +105,35 @@ pf_deploy_logging_patch() {
 	local BASE=$1
 	echo " [${BASE}] patching log level... "
 	cat <<EOF | patch -s -p0 ${BASE}/pingfederate/server/default/conf/log4j2.xml
---- pingfederate-8.2.0.org/pingfederate/server/default/conf/log4j2.xml
-+++ pingfederate-8.2.0/pingfederate/server/default/conf/log4j2.xml
-@@ -999,7 +999,7 @@
+--- pingfederate-8.2.2.org/pingfederate/server/default/conf/log4j2.xml	2016-10-26 17:42:08.000000000 +0200
++++ pingfederate-8.2.2/pingfederate/server/default/conf/log4j2.xml	2016-10-28 08:38:23.000000000 +0200
+@@ -999,8 +999,8 @@
  
          <Logger name="httpclient.wire.content" level="INFO" />
          <Logger name="com.pingidentity.pf.email" level="INFO" />
 -        <Logger name="org.sourceid" level="INFO" />
+-        <Logger name="org.sourceid.saml20.util.SystemUtil" level="INFO" additivity="false">
 +        <Logger name="org.sourceid" level="DEBUG" />
-         <Logger name="org.sourceid.saml20.util.SystemUtil" level="INFO" additivity="false">
++        <Logger name="org.sourceid.saml20.util.SystemUtil" level="DEBUG" additivity="false">
              <AppenderRef ref="CONSOLE" />
              <AppenderRef ref="FILE" />
-@@ -1009,7 +1009,7 @@
+         </Logger>
+@@ -1009,8 +1009,8 @@
          <!-- Adjust the priority value to DEBUG to get additional logging to help troubleshoot XML Signature problems -->
          <Logger name="org.sourceid.common.dsig" level="INFO" />
          <Logger name="org.sourceid.saml20.domain.mgmt.impl.PluginSupport" level="INFO" />
 -        <Logger name="com.pingidentity" level="INFO" />
+-        <Logger name="com.pingidentity.common.util.ErrorHandler" level="INFO" additivity="false">
 +        <Logger name="com.pingidentity" level="DEBUG" />
-         <Logger name="com.pingidentity.common.util.ErrorHandler" level="INFO" additivity="false">
++        <Logger name="com.pingidentity.common.util.ErrorHandler" level="DEBUG" additivity="false">
              <AppenderRef ref="CONSOLE" />
              <AppenderRef ref="FILE" />
-@@ -1229,8 +1229,8 @@
- 
+         </Logger>
+@@ -1230,7 +1230,7 @@
              For database logging, comment the <AsyncRoot> block and uncomment the <Root> block.
          -->
--        <AsyncRoot level="INFO" includeLocation="false">
+         <AsyncRoot level="INFO" includeLocation="false">
 -            <!-- <AppenderRef ref="CONSOLE" /> -->
-+        <AsyncRoot level="DEBUG" includeLocation="false">
 +            <AppenderRef ref="CONSOLE" />
              <AppenderRef ref="FILE" />
          </AsyncRoot>
