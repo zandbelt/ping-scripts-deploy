@@ -101,6 +101,27 @@ pf_deploy_ciphers_patch() {
 EOF
 }
 
+pa_deploy_logging_patch() {
+	local BASE=$1
+	echo " [${BASE}] patching log level... "
+	cat <<EOF | patch -s -p0 ${BASE}/conf/log4j2.xml
+--- conf/log4j2.xml.org	2016-12-21 08:49:44.000000000 +0100
++++ conf/log4j2.xml	2016-12-22 20:43:04.000000000 +0100
+@@ -514,9 +514,9 @@
+ 
+     <Loggers>
+         <!-- PingAccess Loggers-->
+-        <AsyncLogger name="com.pingidentity" level="INFO" additivity="false" includeLocation="false">
++        <AsyncLogger name="com.pingidentity" level="DEBUG" additivity="false" includeLocation="false">
+             <AppenderRef ref="File"/>
+-            <!--<AppenderRef ref="CONSOLE" />-->
++            <AppenderRef ref="CONSOLE" />
+             <!--<AppenderRef ref="SYSLOG" />-->
+         </AsyncLogger>
+         <!-- Log incoming and outgoing cookies-->
+EOF
+}
+
 pf_deploy_logging_patch() {
 	local BASE=$1
 	echo " [${BASE}] patching log level... "
@@ -313,6 +334,7 @@ pa_deploy_pingaccess() {
 		pf_deploy_unzip pingaccess "PingAccess ZIP"
 		# BASE set now
 		pa_deploy_license_copy ${BASE}
+		pa_deploy_logging_patch ${BASE}		
 	else
 		BASE=$1
 	fi
