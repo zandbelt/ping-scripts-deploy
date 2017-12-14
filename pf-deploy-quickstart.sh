@@ -29,7 +29,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###########################################################################
 #
-# Author: Hans Zandbelt <hzandbelt@pingidentity.com>
+# Author: Hans Zandbelt <hans.zandbelt@zmartzone.eu>
 #
 # This script deploys PingFederate and the Quickstart apps.
 #

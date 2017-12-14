@@ -29,17 +29,17 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###########################################################################
 #
-# Author: Hans Zandbelt <hzandbelt@pingidentity.com>
+# Author: Hans Zandbelt <hans.zandbelt@zmartzone.eu>
 #
 # This script deploys PingFederate, PingAccess and the PingAccess Quickstart demo.
 #
 # Prerequisites:
 # - The (MacPorts) utilities unzip and python 2.7 must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-8.2.1.zip)
-#   b) a PingAccess ZIP distribution (eg. pingaccess-4.1.1.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-9.0.0.zip)
+#   b) a PingAccess ZIP distribution (eg. pingaccess-5.0.1.zip)
 #   c) valid license files for PingFederate and PingAccess (pingfederate.lic and pingaccess.lic)
-#   d) the PingAccess Quickstart distribution (eg. pingaccess-quickstart-4.1.1.zip)
+#   d) the PingAccess Quickstart distribution (eg. pingaccess-quickstart-5.0.0.zip)
 #
 ##########################################################################
 
@@ -67,7 +67,7 @@ pa_deploy_launch ${PABASE} $1
 
 echo " [${QSBASE}] running PingAccess configuration script ... "
 echo " [${QSBASE}] press <Enter> two times to accept the default passwords..."
-echo -e "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nyes" | python2.7 ${QSBASE}/scripts/quickstart.py >/dev/null
+echo -e "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nyes\n2\n2" | python2.7 ${QSBASE}/scripts/quickstart.py >/dev/null
 
 rm -rf ${QSBASE}
 

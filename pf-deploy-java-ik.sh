@@ -29,14 +29,14 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###########################################################################
 #
-# Author: Hans Zandbelt <hzandbelt@pingidentity.com>
+# Author: Hans Zandbelt <hans.zandbelt@zmartzone.eu>
 #
 # This script deploys PingFederate and the Java Integration Kit.
 #
 # Prerequisites:
 # - The (MacPorts) utility unzip must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-8.2.1.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-9.0.0.zip)
 #   b) a valid license file (pingfederate.lic)
 #   c) the Java Integration Kit (eg. pf-Java-integration-kit-2.5.5.zip)
 #

@@ -29,7 +29,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###########################################################################
 #
-# Author: Hans Zandbelt <hzandbelt@pingidentity.com>
+# Author: Hans Zandbelt <hans.zandbelt@zmartzone.eu>
 #
 # This script deploys PingFederate and the Agentless Integration Kit
 # plus the included sample applications.
@@ -37,7 +37,7 @@
 # Prerequisites:
 # - The (MacPorts) utilities unzip and sed must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-8.2.1.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-9.0.0.zip)
 #   b) a valid license file (pingfederate.lic)
 #   c) the Agentless Integration Kit (eg. Agentless-Integration-Kit-1-2-1.zip)
 #
