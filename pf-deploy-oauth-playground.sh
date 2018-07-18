@@ -31,15 +31,14 @@
 #
 # Author: Hans Zandbelt <hans.zandbelt@zmartzone.eu>
 #
-# This script deploys a PingFederate, the Java Samples that come with the Java
-# Integration Kit, and the OAuth Playground.
+# This script deploys PingFederate and the OAuth 2.0 Playground.
 #
 # Prerequisites:
 # - The (MacPorts) utility unzip must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-9.0.0.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-9.1.1.zip)
 #   b) a valid license file (pingfederate.lic)
-#   c) the OAuth Playground (eg. OAuthPlayground-3.4.0.zip)
+#   c) the OAuth 2.0 Playground (eg. OAuthPlayground-4.0.0.zip)
 #
 ##########################################################################
 
@@ -50,7 +49,7 @@ source "$(dirname "$0")/pf-deploy-common.sh"
 pf_deploy_pingfederate $1
 PFBASE=${BASE}
 
-# OAuth Playground
+# OAuth 2.0 Playground
 
 pf_deploy_unzip OAuthPlayground "OAuth 2.0 Playground ZIP"
 PGBASE=${BASE}
@@ -64,3 +63,5 @@ pf_deploy_ciphers_patch ${PFBASE}
 
 pf_deploy_launch ${PFBASE} $1
 pf_deploy_browser_open https://localhost:9031/OAuthPlayground
+
+pf_deploy_ognl_patch ${PFBASE}

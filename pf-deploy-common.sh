@@ -101,6 +101,17 @@ pf_deploy_ciphers_patch() {
 EOF
 }
 
+pf_deploy_ognl_patch() { 
+	local BASE=$1
+	echo " [${BASE}] patching for OGNL expressions support (restart after this sequence completes to enable)... "
+	cat > ${BASE}/pingfederate/server/default/data/config-store/org.sourceid.common.ExpressionManager.xml <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.sourceid.org/2004/05/config">
+    <item name="evaluateExpressions">true</item>
+</config>
+EOF
+}
+
 pa_deploy_logging_patch() {
 	local BASE=$1
 	echo " [${BASE}] patching log level... "
