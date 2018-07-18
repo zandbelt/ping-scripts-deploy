@@ -18,7 +18,7 @@ For example for the PingFederate Quickstart you'd need the PingFederate ZIP file
 the Quickstart distribution, a license file in your directory, as in:
     
     $ ls -1
-    pingfederate-9.0.0.zip
+    pingfederate-9.1.1.zip
     pingfederate.lic
     pf-quickstart-1-1.zip
     $~/ping-scripts-deploy/pf-deploy-quickstart.sh
