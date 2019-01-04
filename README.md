@@ -1,7 +1,7 @@
 ping-scripts-deploy
 ===================
 This repository contains scripts that allow you to quickly deploy PingFederate, PingAccess,
-Quickstart demo applications, Integration Kits and the OAuth 3.x playground in various
+Quickstart demo applications, Integration Kits and the OAuth 2.0 Playground in various
 combinations and versions.
 
 It will save you from manually unzipping files, copying license files, starting the
@@ -18,7 +18,7 @@ For example for the PingFederate Quickstart you'd need the PingFederate ZIP file
 the Quickstart distribution, a license file in your directory, as in:
     
     $ ls -1
-    pingfederate-9.1.1.zip
+    pingfederate-9.2.0.zip
     pingfederate.lic
     pf-quickstart-1-1.zip
     $~/ping-scripts-deploy/pf-deploy-quickstart.sh
@@ -41,11 +41,6 @@ Deploys PingFederate (pingfederate-x.x.x.zip) and the Quickstart (pf-quickstart-
  
 - `pf-deploy-oauth-playground.sh`  
 Deploys PingFederate (pingfederate-x.x.x.zip) and the OAuth 2.0 Playground (OAuthPlayground-x.x.x.zip).  
-*Depends on: `pf-deploy-common.sh`*
-
-- `pf-deploy-agentless-ik.sh`  
-Deploys PingFederate (pingfederate-x.x.x.zip), the Agentless Integration Kit and the
-sample IDP/SP applications in there.  
 *Depends on: `pf-deploy-common.sh`*
 
 - `pf-deploy-java-ik.sh`  
