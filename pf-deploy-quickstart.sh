@@ -36,7 +36,7 @@
 # Prerequisites:
 # - The (MacPorts) utility unzip must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-9.2.0.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-9.3.0.zip)
 #   b) a valid license file (pingfederate.lic)
 #   c) the Quickstart distribution (eg. pf-quickstart-1.1.zip)
 #
