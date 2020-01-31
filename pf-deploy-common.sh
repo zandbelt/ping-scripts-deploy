@@ -137,12 +137,12 @@ pf_deploy_logging_patch() {
 	local BASE=$1
 	echo " [${BASE}] patching log level... "
 	cat <<EOF | patch -s -p0 ${BASE}/pingfederate/server/default/conf/log4j2.xml
---- pingfederate-8.2.2.org/pingfederate/server/default/conf/log4j2.xml	2016-10-26 17:42:08.000000000 +0200
-+++ pingfederate-8.2.2/pingfederate/server/default/conf/log4j2.xml	2016-10-28 08:38:23.000000000 +0200
-@@ -999,8 +999,8 @@
- 
-         <Logger name="httpclient.wire.content" level="INFO" />
-         <Logger name="com.pingidentity.pf.email" level="INFO" />
+--- pingfederate-10.0.0/pingfederate/server/default/conf/log4j2.xml.org	2019-12-17 19:55:30.000000000 +0100
++++ pingfederate-10.0.0/pingfederate/server/default/conf/log4j2.xml	2020-01-31 13:56:23.000000000 +0100
+@@ -1193,8 +1193,8 @@
+         <!--
+         <Logger name="com.pingidentity.pf.datastore.other" level="TRACE" />
+         -->
 -        <Logger name="org.sourceid" level="INFO" />
 -        <Logger name="org.sourceid.saml20.util.SystemUtil" level="INFO" additivity="false">
 +        <Logger name="org.sourceid" level="DEBUG" />
@@ -150,7 +150,7 @@ pf_deploy_logging_patch() {
              <AppenderRef ref="CONSOLE" />
              <AppenderRef ref="FILE" />
          </Logger>
-@@ -1009,8 +1009,8 @@
+@@ -1234,8 +1234,8 @@
          <!-- Adjust the priority value to DEBUG to get additional logging to help troubleshoot XML Signature problems -->
          <Logger name="org.sourceid.common.dsig" level="INFO" />
          <Logger name="org.sourceid.saml20.domain.mgmt.impl.PluginSupport" level="INFO" />
@@ -161,7 +161,7 @@ pf_deploy_logging_patch() {
              <AppenderRef ref="CONSOLE" />
              <AppenderRef ref="FILE" />
          </Logger>
-@@ -1230,7 +1230,7 @@
+@@ -1512,7 +1512,7 @@
              For database logging, comment the <AsyncRoot> block and uncomment the <Root> block.
          -->
          <AsyncRoot level="INFO" includeLocation="false">

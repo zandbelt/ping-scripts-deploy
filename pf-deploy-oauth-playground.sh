@@ -36,9 +36,9 @@
 # Prerequisites:
 # - The (MacPorts) utility unzip must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-9.3.0.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-10.0.0.zip)
 #   b) a valid license file (pingfederate.lic)
-#   c) the OAuth 2.0 Playground (eg. OAuthPlayground-4.1.0.zip)
+#   c) the OAuth 2.0 Playground (eg. OAuthPlayground-4.2.zip)
 #
 ##########################################################################
 
@@ -53,8 +53,10 @@ PFBASE=${BASE}
 
 pf_deploy_unzip OAuthPlayground "OAuth 2.0 Playground ZIP"
 PGBASE=${BASE}
-echo " [${PGBASE}] deploy OAuth Playground files ... "
-cp -r ${PGBASE}/dist/* ${PFBASE}/pingfederate/server/default/deploy
+echo " [${PGBASE}] deploy OAuth Playground JAR files ... "
+cp -r ${PGBASE}/dist/deploy/* ${PFBASE}/pingfederate/server/default/deploy
+echo " [${PGBASE}] deploy OAuth Playground configuration files ... "
+cp -r ${PGBASE}/dist/conf/* ${PFBASE}/pingfederate/server/default/conf
 echo " [${PGBASE}] deploy OAuth Playground data.zip ... "
 cp ${PGBASE}/data.zip ${PFBASE}/pingfederate/server/default/data/drop-in-deployer/
 rm -rf ${PGBASE}

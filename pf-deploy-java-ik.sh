@@ -36,9 +36,9 @@
 # Prerequisites:
 # - The (MacPorts) utility unzip must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-9.3.0.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-10.0.0.zip)
 #   b) a valid license file (pingfederate.lic)
-#   c) the Java Integration Kit (eg. pf-Java-integration-kit-2.5.7.zip)
+#   c) the Java Integration Kit (eg. pf-Java-integration-kit-2.5.9.zip)
 #
 ##########################################################################
 
@@ -47,7 +47,7 @@ source "$(dirname "$0")/pf-deploy-common.sh"
 pf_deploy_pingfederate $1
 PFBASE=${BASE}
 
-JIK=pf-java-integration-kit
+JIK=pf-Java-integration-kit
 pf_deploy_unzip ${JIK} "Java Integration Kit ZIP"
 
 echo " [${BASE}] deploy Java IK JAR files ... "
