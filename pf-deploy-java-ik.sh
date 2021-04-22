@@ -36,9 +36,9 @@
 # Prerequisites:
 # - The (MacPorts) utility unzip must be installed.
 # - Download into the directory where you run this script from:
-#   a) a pingfederate ZIP distribution (eg. pingfederate-10.0.0.zip)
+#   a) a pingfederate ZIP distribution (eg. pingfederate-10.2.2.zip)
 #   b) a valid license file (pingfederate.lic)
-#   c) the Java Integration Kit (eg. pf-Java-integration-kit-2.5.9.zip)
+#   c) the Java Integration Kit (eg. pf-Java-integration-kit-2.7.zip)
 #
 ##########################################################################
 

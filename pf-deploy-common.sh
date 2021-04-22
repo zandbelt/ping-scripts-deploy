@@ -259,7 +259,7 @@ function onLoad() {
 </script> </head>
 <body onload="onLoad()">
 Logging in to the PingFederate Administration Console as ${USERNAME}...
-<form method="post" action="${PF}/pingfederate/app">
+<form method="post" action="${PF}/render/pingfederate/app">
 <input type="hidden" name="service" value="direct/0/login/\$Form"/>
 <input type="hidden"name="sp" value="S0"/>
 <input type="hidden"name="Form0" value="cSRFToken,\$FormConditional,\$FormConditional\$0,\$FormConditional\$1,username,password,\$Submit"/>
@@ -269,7 +269,7 @@ Logging in to the PingFederate Administration Console as ${USERNAME}...
 <input type="hidden"name="\$FormConditional\$1" value="T"/>
 <input type="hidden"name="username" value="${USERNAME}"/>
 <input type="hidden"name="password" value="${PASSWD}"/>
-<input type="hidden"name="\$Submit" value="Login"/>
+<input type="hidden"name="\$Submit" value="Sign On"/>
 </form>
 </body></html>
 EOF
